@@ -38,7 +38,7 @@ external_link:
   enable: true # Open external links in new tab
   field: site # Apply to the whole site
   exclude: ''
-  
+
 filename_case: 0
 render_drafts: true
 post_asset_folder: false
@@ -103,6 +103,9 @@ highlight:
   tab_replace: ''
   wrap: false
   hljs: false
+
+include:
+  - .nojekyll
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
