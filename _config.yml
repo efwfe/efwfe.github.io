@@ -89,6 +89,7 @@ pagination_dir: page
 # Include / Exclude file(s)
 ## include:/exclude: options only apply to the 'source/' folder
 include:
+  - .nojekyll
 exclude:
 ignore:
 
@@ -104,8 +105,6 @@ highlight:
   wrap: false
   hljs: false
 
-include:
-  - .nojekyll
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
