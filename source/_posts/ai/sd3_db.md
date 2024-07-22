@@ -18,7 +18,6 @@ tags:
 
 [sd-scripts的项目地址](https://github.com/kohya-ss/sd-scripts)
 
-
 ## 训练的服务器的配置：
 使用的服务器型号：g5x12large aws, GPU占用四张A10G卡 基本上都占用完，一张卡22G左右；
 训练效果比较好的参数： 
@@ -28,6 +27,72 @@ tags:
 4. Steps: 4000
 5. lr_scheduler 学习率调度: cosine_with_restarts
 6. 学习率： 1e-4
+
+
+## 训练命令
+```shell
+
+accelerate launch ./sd3_train.py  \
+ --pretrained_model_name_or_path="/opt/models/sd3_medium.safetensors"\
+ --optimizer_type="AdamW8bit"   \
+ --cache_text_encoder_outputs \
+  --cache_text_encoder_outputs_to_disk \
+  --vae_batch_size=1 \
+  --cache_latents --cache_latents_to_disk \
+  --caption_extension=".txt" \
+  --learning_rate=1e-4 \
+  --lr_scheduler="cosine_with_restarts" \
+  --output_name="last" \
+  --save_model_as=safetensors\
+  --save_precision="fp16"  \
+  --train_batch_size=1   \
+  --resolution="1024,1024" \
+  --save_every_n_epochs=1 \
+  --lr_scheduler_num_cycles=1   \
+  --clip_g="/opt/models/text_encoders/clip_g.safetensors"   \
+  --clip_l="/opt/models/text_encoders/clip_l.safetensors"  \
+  --t5xxl="/opt/models/text_encoders/t5xxl_fp16.safetensors"   \
+  --max_train_epochs=16 \
+  --mixed_precision=bf16   \
+  --debiased_estimation_loss  \
+  --lr_warmup_steps=0 \
+  --keep_tokens=1 \
+  --output_dir="<OUTPUT DIR>"   \
+  --train_data_dir="<INPUT DIR>"\
+  --full_bf16 
+
+```
+
+## 验证代码
+
+```python
+import torch
+from itertools import cycle
+from diffusers import AutoPipelineForText2Image, StableDiffusion3Pipeline, AutoencoderKL
+from transformers import T5EncoderModel, BitsAndBytesConfig, CLIPTokenizer, AutoTokenizer
+from transformers import (
+    CLIPTextModelWithProjection,
+    CLIPTokenizer,
+    T5EncoderModel,
+    T5TokenizerFast,
+)
+
+
+_pipe = AutoPipelineForText2Image.from_pretrained(
+"stabilityai/stable-diffusion-3-medium-diffusers",
+torch_dtype=torch.float16
+).to('cpu')
+
+
+pipe = StableDiffusion3Pipeline.from_single_file(
+    model_path,
+    text_encoder=_pipe.text_encoder,
+    text_encoder_2=_pipe.text_encoder_2,
+    text_encoder_3=_pipe.text_encoder_3,
+    torch_dtype=torch.float16).to(cuda)
+image = pipe(prompt).images[0]
+
+```
 
 
 ## 微调lora的遇到的问题
