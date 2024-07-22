@@ -89,7 +89,7 @@ pipe = StableDiffusion3Pipeline.from_single_file(
     text_encoder=_pipe.text_encoder,
     text_encoder_2=_pipe.text_encoder_2,
     text_encoder_3=_pipe.text_encoder_3,
-    torch_dtype=torch.float16).to(cuda)
+    torch_dtype=torch.float16).to('cuda')
 image = pipe(prompt).images[0]
 
 ```
