@@ -48,8 +48,6 @@
 
 ```shell
 
-  
-
 accelerate launch ./sd3_train.py \
 --pretrained_model_name_or_path="/opt/models/sd3_medium.safetensors"\
 --optimizer_type="AdamW8bit" \
@@ -173,3 +171,9 @@ image = pipe(prompt).images[0]
 > epcoh太多或者steps太多的时候，这种情况的输出结果拓展性就很差，过分拟合原图的效果
 
 > 解决： 调整学习率，适当调整steps和epcoh的批次数，根据每一次的输出结果保存的checkpint中选一组比较可靠的模型。
+
+
+## 注意事项
+
+1. 测试的cfg的值设置在4-5左右可能比较好，diffusers默认是7。
+2. 数据集的构建是比较重要的一部分。
